@@ -6,34 +6,41 @@
     <title>Scoreboard App</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="body">
 
 <div class="container">
-    <div class="navbar">
-        <div class="hamburger" onclick="toggleMenu()">☰</div>
-        <div class="nav-links">
-            <a href="#!/login">Login</a>
-            <a href="#!/register">Register</a>
-            <a href="#!/players">Add Players</a>
-            <a href="#!/wickets">Add Wickets</a>
-            <a href="#!/score">Score</a>
-            <a href="#!/teamscore">Team Score</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="#!/login">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!/register">Register</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!/players">Add Players</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!/wickets">Add Wickets</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!/score">Score</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!/teamscore">Team Score</a></li>
+            </ul>
         </div>
-    </div>
+    </nav>
+
     <!-- Snackbar for Success/Failure -->
     <div id="snackbar" class="snackbar">
         <span id="snackbar-message"></span>
         <div class="progress-bar"></div>
     </div>
     
-    </div>
-    
     <ng-view class="middle"></ng-view>
 </div>
+
 <script>
-    
     var app = angular.module('scoreApp', ['ngRoute']);
     app.config(function($routeProvider) {
         $routeProvider
@@ -42,478 +49,176 @@
                 controller: 'MainController'
             })
             .when('/login', {
-                template:`<div>
-        <h2>Login User</h2>
-        <form ng-submit="loginUser()">
-            <input type="text" ng-model="login.u_name" placeholder="Username" required>
-            <input type="password" ng-model="login.u_password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
-    <p class="p">if you don't have any account the <a href="#!/register">Register</a></p>
-
-    `,
+                template: `
+                    <div>
+                        <h2>Login User</h2>
+                        <form ng-submit="loginUser()">
+                            <input type="text" ng-model="login.u_name" placeholder="Username" class="form-control" required>
+                            <input type="password" ng-model="login.u_password" placeholder="Password" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                    <p class="p">if you don't have any account then <a href="#!/register">Register</a></p>
+                `,
                 controller: 'MainController'
             })
             .when('/register', {
                 template: `
                     <div>
-        <h2>Register User</h2>
-        <form ng-submit="registerUser()">
-            <input type="text" ng-model="user.u_name" placeholder="Username" required>
-            <input type="password" ng-model="user.u_password" placeholder="Password" required>
-            <button type="submit">Register</button>
-        </form>
-    </div>
-    <p class="p">if you have an account already then <a href="#!/login">Login</a></p>
+                        <h2>Register User</h2>
+                        <form ng-submit="registerUser()">
+                            <input type="text" ng-model="user.u_name" placeholder="Username" class="form-control" required>
+                            <input type="password" ng-model="user.u_password" placeholder="Password" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
+                    </div>
+                    <p class="p">if you have an account already then <a href="#!/login">Login</a></p>
                 `,
                 controller: 'MainController'
             })
             .when('/players', {
-    template: `
-        <div>
-        <h2>Add Player</h2>
-        <form ng-submit="addPlayer()">
-            <input type="text" ng-model="player.u_name" placeholder="Player Name" required>
-            <input type="number" ng-model="player.u_goals" placeholder="Goals" required>
-            <button type="submit">Add Player</button>
-        </form>
-    </div>
-
-        <div>
-        <h2>Search and Get Players</h2>
-        <input type="text" class="search" ng-model="searchQueryPlayers" placeholder="Search players..." />
-        <button ng-click="getPlayers()">Get Players</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Player Name</th>
-                    <th>Goals</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="player in players | filter:searchQueryPlayers">
-                    <td>{{player.u_name}}</td>
-                    <td>{{player.u_goals}}</td>
-                    <td>
-                        <button class="update" ng-click="editingPlayer[player.u_name] = !editingPlayer[player.u_name]">Update Goals</button>
-                        <div ng-show="editingPlayer[player.u_name]">
-                            <input type="number" ng-model="player.new_goals" placeholder="Goals to Add" />
-                            <button ng-click="updateGoals(player.u_name, player.new_goals)">Save</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-        <button ng-click="logout()" class="logout-button">Logout</button>
-    `,
-    controller: 'MainController'
-})
-            .when('/wickets', {
-    template: `
-        <div>
-        <h2>Add Wickets</h2>
-        <form ng-submit="addWickets()">
-            <input type="text" ng-model="wickets.u_name" placeholder="Player Name" required>
-            <input type="number" ng-model="wickets.u_wickets" placeholder="Wickets" required>
-            <button type="submit">Add Wickets</button>
-        </form>
-    </div>
-
-        
-
-        <div>
-        <h2>Search and Get Wickets</h2>
-        <input type="text" class="search" ng-model="searchQueryWickets" placeholder="Search wickets..." />
-        <button ng-click="getWickets()">Get Wickets</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Player Name</th>
-                    <th>Wickets</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="player in wicketsList | filter:searchQueryWickets">
-                    <td>{{player.u_name}}</td>
-                    <td>{{player.u_wickets}}</td>
-                    <td>
-                        <button class="update" ng-click="editingWicket[player.u_name] = !editingWicket[player.u_name]">Update</button>
-                        <div ng-show="editingWicket[player.u_name]">
-                            <input type="number" ng-model="player.new_wickets" placeholder="Wickets to Add" />
-                            <button ng-click="updateWickets(player.u_name, player.new_wickets)">Save</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-        <button ng-click="logout()" class="logout-button">Logout</button>
-    `,
-    controller: 'MainController'
-})
-            .when('/score',{
                 template: `
-                <div>
-        <h2>Add Score</h2>
-        <form ng-submit="addScore()">
-            <input type="text" ng-model="score.u_name" placeholder="Player Name" required>
-            <input type="number" ng-model="score.u_score" placeholder="Score" required>
-            <button type="submit">Add Score</button>
-        </form>
-    </div>
-        <!-- Search and Get Scores -->
-    <div>
-        <h2>Search and Get Scores</h2>
-        <input type="text" class="search" ng-model="searchQueryScores" placeholder="Search scores..." />
-        <button ng-click="getScores()">Get Scores</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Player Name</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="player in scores | filter:searchQueryScores">
-                    <td>{{player.u_name}}</td>
-                    <td>{{player.u_score}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-        <button ng-click="logout()" class="logout-button">Logout</button>
-        `,
-                controller: 'MainController'
-
-            })
-            .when('/teamscore', {
-                template: `
-                <!-- Add Team Score -->
-    <div>
-        <h2>Add Team Score</h2>
-        <form ng-submit="addTeamScore()">
-            <input type="text" ng-model="team.u_name" placeholder="Team Name" required>
-            <input type="number" ng-model="team.u_score" placeholder="Score" required>
-            <button type="submit">Add Team Score</button>
-        </form>
-    </div>
-
-    <!-- Search and Get Team Scores -->
-    <div>
-        <h2>Search and Get Team Scores</h2>
-        <input type="text" class="search" ng-model="searchQueryTeamScores" placeholder="Search team scores..." />
-        <button ng-click="getTeamScores()">Get Team Scores</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Team Name</th>
-                    <th>Team Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="team in teamScores | filter:searchQueryTeamScores">
-                    <td>{{team.u_name}}</td>
-                    <td>{{team.u_score}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-
-
-        <button ng-click="logout()" class="logout-button">Logout</button>
-                
+                    <div>
+                        <h2>Add Player</h2>
+                        <form ng-submit="addPlayer()">
+                            <input type="text" ng-model="player.u_name" placeholder="Player Name" class="form-control" required>
+                            <input type="number" ng-model="player.u_goals" placeholder="Goals" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Add Player</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2>Search and Get Players</h2>
+                        <input type="text" class="form-control" ng-model="searchQueryPlayers" placeholder="Search players..." />
+                        <button class="btn btn-primary" ng-click="getPlayers()">Get Players</button>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Goals</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="player in players | filter:searchQueryPlayers">
+                                    <td>{{player.u_name}}</td>
+                                    <td>{{player.u_goals}}</td>
+                                    <td>
+                                        <button class="btn btn-warning" ng-click="editingPlayer[player.u_name] = !editingPlayer[player.u_name]">Update Goals</button>
+                                        <div ng-show="editingPlayer[player.u_name]">
+                                            <input type="number" ng-model="player.new_goals" placeholder="Goals to Add" class="form-control" />
+                                            <button class="btn btn-success" ng-click="updateGoals(player.u_name, player.new_goals)">Save</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button ng-click="logout()" class="btn btn-danger">Logout</button>
                 `,
                 controller: 'MainController'
             })
-            .otherwise({
-                redirectTo: '/'
+            .when('/wickets', {
+                template: `
+                    <div>
+                        <h2>Add Wickets</h2>
+                        <form ng-submit="addWickets()">
+                            <input type="text" ng-model="wickets.u_name" placeholder="Player Name" class="form-control" required>
+                            <input type="number" ng-model="wickets.u_wickets" placeholder="Wickets" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Add Wickets</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2>Search and Get Wickets</h2>
+                        <input type="text" class="form-control" ng-model="searchQueryWickets" placeholder="Search wickets..." />
+                        <button class="btn btn-primary" ng-click="getWickets()">Get Wickets</button>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Wickets</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="player in wicketsList | filter:searchQueryWickets">
+                                    <td>{{player.u_name}}</td>
+                                    <td>{{player.u_wickets}}</td>
+                                    <td>
+                                        <button class="btn btn-warning" ng-click="editingWicket[player.u_name] = !editingWicket[player.u_name]">Update</button>
+                                        <div ng-show="editingWicket[player.u_name]">
+                                            <input type="number" ng-model="player.new_wickets" placeholder="Wickets to Add" class="form-control" />
+                                            <button class="btn btn-success" ng-click="updateWickets(player.u_name, player.new_wickets)">Save</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button ng-click="logout()" class="btn btn-danger">Logout</button>
+                `,
+                controller: 'MainController'
+            })
+            .when('/score', {
+                template: `
+                    <div>
+                        <h2>Add Score</h2>
+                        <form ng-submit="addScore()">
+                            <input type="text" ng-model="score.u_name" placeholder="Player Name" class="form-control" required>
+                            <input type="number" ng-model="score.u_score" placeholder="Score" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Add Score</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2>Search and Get Scores</h2>
+                        <input type="text" class="form-control" ng-model="searchQueryScores" placeholder="Search scores..." />
+                        <button class="btn btn-primary" ng-click="getScores()">Get Scores</button>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="player in scoresList | filter:searchQueryScores">
+                                    <td>{{player.u_name}}</td>
+                                    <td>{{player.u_score}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button ng-click="logout()" class="btn btn-danger">Logout</button>
+                `,
+                controller: 'MainController'
+            })
+            .when('/teamscore', {
+                template: `
+                    <div>
+                        <h2>Team Score</h2>
+                        <button ng-click="getTeamScores()" class="btn btn-primary">Get Team Scores</button>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="team in teamScores">
+                                    <td>{{team.u_team}}</td>
+                                    <td>{{team.u_score}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button ng-click="logout()" class="btn btn-danger">Logout</button>
+                `,
+                controller: 'MainController'
             });
     });
-    function toggleMenu() {
-        const navLinks = document.querySelector('.nav-links');
-        navLinks.style.display = navLinks.style.display === 'none' ? 'flex' : 'none';
-    }
-    app.controller('MainController', function($scope, $http,$location) {
-            $scope.user = {};
-            $scope.login = {};
-            $scope.player = {};
-            $scope.wickets = {};
-            $scope.score = {};
-            $scope.team = {};
-            $scope.players = [];
-            $scope.wicketsList = [];
-            $scope.scores = [];
-            $scope.teamScores = [];
-            $scope.token = '';
-            $scope.searchQueryPlayers = '';
-            $scope.searchQueryWickets = '';
-            $scope.searchQueryScores = '';
-            $scope.searchQueryTeamScores = '';
-            $scope.editingPlayer = {}; // Track player being edited
-        $scope.editingWicket = {};
+</script>
 
-        $scope.logout = function() {
-                    
-                    localStorage.removeItem("token")
-                    $location.path('/login');
-                    showSnackbar("logged out successfully","success")
-                   
-                } ;
-                
-        function showSnackbar(message, type) {
-    var snackbar = document.getElementById("snackbar");
-    var snackbarMessage = document.getElementById("snackbar-message");
-    var progressBar = document.querySelector(".progress-bar");
+<script src="app.js"></script>
 
-    // Set the dynamic message
-    snackbarMessage.textContent = message;
-
-    // Apply the type class
-    snackbar.className = "snackbar show " + type;
-
-    // Reset the progress bar animation
-    var newProgressBar = document.querySelector(".progress-bar");
-    newProgressBar.style.animation = 'none';
-    newProgressBar.offsetHeight; // Trigger a reflow
-    newProgressBar.style.animation = null; 
-
-    // After 3 seconds, hide the snackbar
-    setTimeout(function() {
-        snackbar.className = snackbar.className.replace("show", "");
-    }, 3000);
-}
-
-            const apiUrl = 'https://flaskng-cfym.vercel.app';  // Adjust the base URL to your Flask app
-
-            // Register User
-            $scope.registerUser = function() {
-                $http.post(apiUrl + '/register', $scope.user)
-                    .then(function(response) {
-                        //alert("User Registered!");
-                        showSnackbar("User Registered!","success")
-                        $location.path('/login');
-                    }, function(error) {
-                        //alert("Registration Failed!");
-                        showSnackbar("Registration Failed","error")
-                    });
-            };
-
-            // Login User
-            $scope.loginUser = function() {
-                $http.post(apiUrl + '/login', $scope.login)
-                    .then(function(response) {
-                        
-                        $scope.token = response.data.access_token;
-                        localStorage.setItem("token",$scope.token)
-                        //alert("Login Successful!");
-                        showSnackbar("User logged In successfully!","success")
-                        $location.path('/players');
-                    }, function(error) {
-                        showSnackbar("Login Failed!","error")
-                        //alert("Login Failed!");
-                    });
-            };
-
-            // Add Player
-            $scope.addPlayer = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.post(apiUrl + '/add_player', $scope.player, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        //alert("Player Added!");
-                        showSnackbar("player added","success");
-                    }, function(error) {
-                        showSnackbar("Failed","error");
-                       // alert("Failed to Add Player!");
-                    });
-                } else {
-                    showSnackbar("user not logged in","error")
-                   // alert("You need to log in first.");
-                }
-            };
-
-            // Add Wickets
-            $scope.addWickets = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.post(apiUrl + '/add_wickets', $scope.wickets, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        showSnackbar("Wickets added","success")
-                       // alert("Wickets Added!");
-                    }, function(error) {
-                        showSnackbar("Failed","error")
-                       // alert("Failed to Add Wickets!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                   // alert("You need to log in first.");
-                }
-            };
-
-            // Add Score
-            $scope.addScore = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.post(apiUrl + '/add_score', $scope.score, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        showSnackbar("Score added","success");
-                        //alert("Score Added!");
-                    }, function(error) {
-                        showSnackbar("failed","error")
-                        //alert("Failed to Add Score!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-            // Add Team Score
-            $scope.addTeamScore = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.post(apiUrl + '/add_team_score', $scope.team, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        //alert("Team Score Added!");
-                        showSnackbar("Team Score added","success");
-                    }, function(error) {
-                        showSnackbar("failed","error")
-                        //alert("Failed to Add Team Score!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-            // Get Players
-            $scope.getPlayers = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.get(apiUrl + '/get_players', {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        $scope.players = response.data;
-                    }, function(error) {
-                        alert("Failed to Fetch Players!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-            // Get Wickets
-            $scope.getWickets = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.get(apiUrl + '/get_wickets', {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        $scope.wicketsList = response.data;
-                    }, function(error) {
-                        alert("Failed to Fetch Wickets!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-            // Get Scores
-            $scope.getScores = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.get(apiUrl + '/get_score', {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        $scope.scores = response.data;
-                    }, function(error) {
-                        alert("Failed to Fetch Scores!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-            // Get Team Scores
-            $scope.getTeamScores = function() {
-                $scope.token=localStorage.getItem("token");
-                if ($scope.token) {
-                    $http.get(apiUrl + '/get_team_score', {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        $scope.teamScores = response.data;
-                    }, function(error) {
-                        alert("Failed to Fetch Team Scores!");
-                    });
-                } else {
-                    showSnackbar("You need to log in first.","error")
-                    //alert("You need to log in first.");
-                }
-            };
-
-
-            $scope.updateGoals = function(player,goals) {
-                $scope.token=localStorage.getItem("token");
-                
-                $scope.player.u_name=player
-                $scope.player.u_goals=goals
-                
-                    $http.post(apiUrl + '/add_player', $scope.player, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        showSnackbar("Score Updated","success")
-                        $scope.getPlayers();
-                    }, function(error) {
-
-                        showSnackbar("Failed to Add Player!","error");
-                    });
-                } 
-
-
-                $scope.updateWickets = function(player,wkts) {
-                    $scope.token=localStorage.getItem("token");
-                
-                $scope.wickets.u_name=player
-                $scope.wickets.u_wickets=wkts
-                
-                    $http.post(apiUrl + '/add_wickets', $scope.wickets, {
-                        headers: { 'Authorization': 'Bearer ' + $scope.token }
-                    })
-                    .then(function(response) {
-                        showSnackbar("Score Updated","success")
-                        $scope.getWickets();
-                    }, function(error) {
-                        showSnackbar("Failed to Add Player!","error");
-                    });
-                } ;
-            
-                
-            
-            });
-    </script>
 </body>
 </html>
